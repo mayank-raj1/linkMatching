@@ -1,0 +1,6 @@
+chroma_setup.py
+cohere_test.py
+csv_parser.py
+matchmaker.py
+/__pycache__
+/chroma_db
