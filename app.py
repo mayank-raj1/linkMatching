@@ -3,25 +3,27 @@ import random
 
 from cafe import get_random_cafe
 from introduction import introduction
+from match import predictPair
 
 app = Flask(__name__)
 
 
 def get_pairs(phone_numbers):
+
     # replace with actual matching
-    return [("123-456-7890", "234-567-8901"), ("345-678-9012", "456-789-0123")]
+    return [("+16478973143", "+14164276719")]
 
 
 @app.route('/match', methods=['POST'])
 def match():
     data = request.json
-    phone_numbers = []
+    people = []
     user_info = {}
 
     for item in data:
         phone = item.get('Phone')
         if phone:
-            phone_numbers.append(phone)
+            people.append(phone)
             user_info[phone] = {
                 'name': item.get('Name', ''),
                 'bio': item.get('Bio', ''),
@@ -29,22 +31,27 @@ def match():
                 'availability': item.get('Availability', '')
             }
 
-    pairs = get_pairs(phone_numbers)
+    pairs = predictPair(data)
     results = []
-
-    for phone1, phone2 in pairs:
-        intro1 = introduction(**user_info[phone2])
-        intro2 = introduction(**user_info[phone1])
+    print(type(pairs))
+    for index in range(0, len(pairs)):
+        intro1 = introduction(**user_info[pairs[index][1]])
+        intro2 = introduction(**user_info[pairs[index][0]])
         cafe = get_random_cafe()
 
         result = {
-            phone1: intro1,
-            phone2: intro2,
+            pairs[index][0]: intro1,
+            pairs[index][1]: intro2,
             'cafeinfo': cafe
         }
         results.append(result)
 
     return jsonify(results)
+
+@app.route('/', methods=['GET'])
+def testfun():
+    return 'Hello World!'
+
 
 if __name__ == '__main__':
     app.run(debug=True)

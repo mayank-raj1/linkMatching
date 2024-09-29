@@ -79,9 +79,8 @@ def print_matches(matched_phone_numbers: List[Tuple[str, str]]):
     for i, (phone1, phone2) in enumerate(matched_phone_numbers, 1):
         print(f"Match {i}: {phone1} - {phone2}")
 
-def main():
+def predictPair(data):
     # Load and process data
-    data = load_json_data('data/new.json')
     add_documents_to_collection(data)
 
     # Generate distance matrix
@@ -96,7 +95,5 @@ def main():
     # Print results
     print_matches(matched_phone_numbers)
 
-    print(json.dumps(matched_phone_numbers))
 
-if __name__ == "__main__":
-    main()
+    return matched_phone_numbers
