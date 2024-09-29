@@ -19,10 +19,14 @@ def load_json_data(file_path: str) -> List[dict]:
 
 def add_documents_to_collection(data: List[dict]):
     for item in data:
+        combined_text = f"{item['Response']} {item['Bio']}"
         collection.add(
-            documents=[item['Bio+Response']],
-            metadatas=[{"id": item['ID'], "phone": item['Phone Number']}],
-            ids=[item['ID']]
+            documents=[combined_text],
+            metadatas=[{
+                "name": item['Name'],
+                "availability": item['Availability']
+            }],
+            ids=[item['Phone']]
         )
 
 def generate_distance_matrix(collection) -> Tuple[np.ndarray, List[str]]:
@@ -68,21 +72,16 @@ def best_first_greedy_matching(distances: np.ndarray) -> List[Tuple[int, int]]:
 
     return matches
 
-def map_ids_to_documents(matches: List[Tuple[int, int]], ids: List[str], data: List[dict]) -> List[Tuple[dict, dict]]:
-    id_to_doc = {item['ID']: item for item in data}
-    return [(id_to_doc[ids[i]], id_to_doc[ids[j]]) for i, j in matches]
+def map_ids_to_phone_numbers(matches: List[Tuple[int, int]], ids: List[str]) -> List[Tuple[str, str]]:
+    return [(ids[i], ids[j]) for i, j in matches]
 
-def print_matches(matched_documents: List[Tuple[dict, dict]]):
-    for i, (doc1, doc2) in enumerate(matched_documents, 1):
-        print(f"\nMatch {i}:")
-        print(f"Person 1 (ID: {doc1['ID']}, Phone: {doc1['Phone Number']}):")
-        print(f"  {doc1['Bio+Response']}")
-        print(f"Person 2 (ID: {doc2['ID']}, Phone: {doc2['Phone Number']}):")
-        print(f"  {doc2['Bio+Response']}")
+def print_matches(matched_phone_numbers: List[Tuple[str, str]]):
+    for i, (phone1, phone2) in enumerate(matched_phone_numbers, 1):
+        print(f"Match {i}: {phone1} - {phone2}")
 
 def main():
     # Load and process data
-    data = load_json_data('/Users/jibk/Desktop/wtf/maybeeeeeee/data.json')
+    data = load_json_data('data/new.json')
     add_documents_to_collection(data)
 
     # Generate distance matrix
@@ -91,11 +90,13 @@ def main():
     # Apply Best-First Greedy algorithm
     matches = best_first_greedy_matching(distance_matrix)
 
-    # Map matches back to original documents
-    matched_documents = map_ids_to_documents(matches, ids, data)
+    # Map matches to phone numbers
+    matched_phone_numbers = map_ids_to_phone_numbers(matches, ids)
 
     # Print results
-    print_matches(matched_documents)
+    print_matches(matched_phone_numbers)
+
+    print(json.dumps(matched_phone_numbers))
 
 if __name__ == "__main__":
     main()
