@@ -10,3 +10,8 @@ We used some fancy technologies to bring Links life:
  - **Vector Search:** Matches users based on the semantic similarity of their thoughts and interests.
  - **Search Re-ranking with LLMS:** Fine-tunes the matches for better relevance and user satisfaction.
  - **Reward Distribution Algorithm:** Optimizes the pairing process to ensure fairness and maximize engagement.
+
+As part of the experience, users are encouraged to explore **curated coffee shops**, complete with:
+ - Directions to the coffee shop.
+ - Recommendations for hidden things to do nearby.
+ - Collaborations with local businesses to enhance the walking experience.
